@@ -1,0 +1,22 @@
+---
+
+- name: Add MySQL repo on Debian
+  apt:
+    deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+    install_recommends: yes
+    state: present
+
+
+
+
+- name: Install MySQL on Debian
+  apt:
+    force: yes
+    install_recommends: yes
+    name: mysql-server
+    state: present
+    update_cache: yes
+  notify:
+    - import variables
+    - Install python pip on Debian
+    - restart MySQL on Debian

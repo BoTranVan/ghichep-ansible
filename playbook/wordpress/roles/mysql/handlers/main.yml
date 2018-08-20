@@ -1,0 +1,41 @@
+---
+# handlers file for mysql
+
+- name: import variables
+  include_vars:
+    file: ../../wp/vars/main.yml
+
+- include: ansible_pkg_mgr_debian.yml
+- include: ansible_pkg_mgr_redhat.yml
+
+
+- name: upgrade the Python Pip module
+  pip:
+    name: --upgrade pip
+  state: latest
+
+
+- name: Install the Python MySQLB module
+  pip:
+    name: mysql-python
+  state: latest
+
+
+- name: Create a new database for wordpress
+  mysql_db:
+    name: '{{ ansible_wp_database_name }}'
+    login_user: root
+    login_password: '{{ ansible_root_password_database }}'
+    state: present
+  notify: grant privileges
+
+
+- name: grant privileges
+  mysql_user:
+    login_host: '{{ ansible_database_ip }}'
+    login_user: root
+    login_password: '{{ ansible_root_password_database }}'
+    name: '{{ ansible_wp_username }}'
+    password: '{{ ansible_wp_password }}'
+    host: '{{ ansible_client_address }}'
+    priv: '{{ ansible_wp_database_name }}.*:ALL'

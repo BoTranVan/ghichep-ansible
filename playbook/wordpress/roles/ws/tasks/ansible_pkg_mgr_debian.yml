@@ -1,0 +1,35 @@
+---
+
+- name: detect package name apache2
+  set_fact:
+    ansible_package_name: apache2
+  when:  ansible_web_engine is match("apache2|httpd")
+
+
+- name: install web engine apache2
+  apt:
+    force: yes
+    install_recommends: yes
+    name: '{{ ansible_package_name }}'
+    state: latest
+    update_cache: yes
+  when:  ansible_web_engine is match("apache2|httpd")
+  notify:
+    - include vars
+    - config web engine apache2
+
+
+- name: detect package name nginx
+  set_fact:
+    ansible_package_name: nginx
+  when:  ansible_web_engine is match("nginx")
+
+
+- name: Add an NIGNX signing key on Debian
+  apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    validate_certs: yes
+    state: present
+  notify:
+    - include vars
+    - Add specified repository into sources list on Debian

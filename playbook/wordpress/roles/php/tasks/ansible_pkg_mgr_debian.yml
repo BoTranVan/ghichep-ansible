@@ -1,0 +1,29 @@
+---
+
+- name: install php package on Debian
+  apt:
+    force: yes
+    install_recommends: yes
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  with_items:
+    - php
+    - php-pear
+    - php-mbstring
+    - php-fpm
+    - libapache2-mod-php
+    - php-common
+    - php-cgi
+    - libapache2-mod-fastcgi
+    - php-mysql
+  notify:
+    - config php on Debian
+
+
+
+- name: restart php-fpm on Debian
+  service:
+    enabled: yes
+    name: php7.0-fpm
+    state: restarted

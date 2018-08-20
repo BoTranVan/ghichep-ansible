@@ -1,0 +1,5 @@
+---
+# vars file for ws
+ansible_ws_virtual_domain: "wordpress.io"
+ansible_ws_port: 80
+ansible_web_engine: nginx

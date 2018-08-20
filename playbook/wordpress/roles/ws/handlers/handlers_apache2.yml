@@ -1,0 +1,28 @@
+---
+
+- name: config web engine apache2
+  replace:
+    backup: yes
+    path: '{{ item.path }}'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  with_items:
+    - { path: '/etc/apache2/apache2.conf', regexp: '\"\/etc\/apache2\"\n', replace: '\"\/etc\/apache2\"\nServerName localhost' }
+    - { path: '/etc/apache2/conf-enabled/security.conf', regexp: 'ServerTokens OS', replace: 'ServerTokens Prod' }
+    - { path: '/etc/apache2/mods-enabled/dir.conf', regexp: '(index.(\w)+(\s)*)+', replace: 'index.php index.html index.cgi \n' }
+  notify:
+    - initialing apache2 wordpress.conf
+    - enable virtual domain apache2
+
+
+- name: initialing apache2 wordpress.conf
+  template:
+    backup: yes
+    src: 'apache2_wordpress.conf.j2'
+    dest: '/etc/apache2/sites-available/wordpress.conf'
+
+
+- name: enable virtual domain apache2
+  command: a2ensite wordpress
+  notify: restart web engine
+

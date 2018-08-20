@@ -1,0 +1,27 @@
+---
+
+- name: Add MySQL repo on Redhat
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+    state: present
+
+
+
+- name: Enable epel-release repos
+  yum:
+    name: epel-release
+    state: present
+    update_cache: yes
+
+
+- name: Install MySQL on Redhat
+  yum:
+    disablerepo: mysql80-community
+    enablerepo: mysql57-community
+    name: mysql-server
+    state: present
+    update_cache: yes
+  notify:
+    - import variables
+    - Install python pip on Redhat
+    - restart MySQL on Redhat

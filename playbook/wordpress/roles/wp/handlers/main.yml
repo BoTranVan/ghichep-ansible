@@ -1,0 +1,25 @@
+---
+# handlers file for wp
+- name: unpack latest.tar.gz
+  unarchive:
+    src: '{{ ansible_wp_dest }}'
+    dest: '{{ ansible_unpack_dir }}'
+    remote_src: yes
+
+
+- name: copy wp-config.php to remote
+  template:
+    src: wp-config.php.j2
+    dest: '{{ ansible_unpack_dir }}/wordpress/wp-config.php'
+
+
+- name: import role php
+  import_tasks: ../../php/tasks/ansible_pkg_mgr_debian.yml
+  when:
+    - ansible_pkg_mgr == 'apt'
+- import_tasks: ../../php/tasks/ansible_pkg_mgr_redhat.yml
+  when:
+    - ansible_pkg_mgr == 'yum'
+
+
+

@@ -1,0 +1,48 @@
+---
+
+- name: Install python pip on Redhat
+  yum:
+    name: python*pip, MySQL-python
+    state: present
+  notify:
+    - upgrade the Python Pip module
+    - Install the Python MySQLB module
+
+
+- name: restart MySQL on Redhat
+  service:
+    enabled: yes
+    name: mysqld
+    state: '{{ item }}'
+  with_items:
+    - reloaded
+    - started
+    - restarted
+  notify:
+    - allow mysqld service on Redhat
+    - get root password on Redhat
+
+
+# mysql 8.0
+# grep 'temporary password' /var/log/mysqld.log | cut -d ' ' -f 13
+# mysql 5.7
+# grep 'temporary password' /var/log/mysqld.log | cut -d ' ' -f 11
+- name: get root password on Redhat
+  shell: grep 'temporary password' /var/log/mysqld.log | cut -d ' ' -f 11
+  register: ansible_temp_root_password_database
+  notify: change root password on Redhat
+
+
+- name: change root password on Redhat
+  shell: mysql -u root -p'{{ ansible_temp_root_password_database.stdout_lines[0] }}' -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ ansible_root_password_database }}'" --connect-expired-password
+  notify: Create a new database for wordpress
+
+
+- name: allow mysqld service on Redhat
+  firewalld:
+    immediate: yes
+    permanent: yes
+    service: '{{ item }}'
+    state: enabled
+  with_items:
+   - mysql

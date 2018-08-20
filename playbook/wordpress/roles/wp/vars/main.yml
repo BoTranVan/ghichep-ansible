@@ -1,0 +1,13 @@
+---
+# vars file for wp
+ansible_wp_url: https://wordpress.org/latest.tar.gz
+ansible_wp_dest: /root/latest.tar.gz
+ansible_unpack_dir: /var/www
+
+
+ansible_wp_database_name: wordpress
+ansible_wp_username: wordpress
+ansible_wp_password: 2UeDu@oI
+
+ansible_client_address: '%'
+ansible_database_ip: 10.10.10.73

@@ -1,0 +1,10 @@
+---
+# tasks file for php
+
+- name: detect os for install php
+  import_tasks: ansible_pkg_mgr_debian.yml
+  when:
+    - ansible_pkg_mgr == 'apt'
+- import_tasks: ansible_pkg_mgr_redhat.yml
+  when:
+    - ansible_pkg_mgr == 'yum'

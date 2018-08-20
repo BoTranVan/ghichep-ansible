@@ -1,0 +1,6 @@
+---
+# vars file for mysql
+
+
+ansible_root_password_database: y7V&&I0N
+ansible_mysql_version: 5.7

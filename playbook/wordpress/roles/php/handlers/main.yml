@@ -1,0 +1,46 @@
+---
+# handlers file for php
+
+- name: config php on Debian
+  command: '{{ item }}'
+  with_items:
+    - a2enconf php7.0-cgi
+    - a2enmod proxy_fcgi
+  notify: config php-fpm on Debian
+
+
+- name: config php-fpm on Debian
+  replace:
+    backup: yes
+    path: '{{ item.path }}'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  with_items:
+    - { path: '/etc/php/7.0/fpm/pool.d/www.conf', regexp: '\/run\/php\/php7.0-fpm.sock', replace: '127.0.0.1:9000' }
+#   notify: restart php-fpm on Debian
+
+
+# - name: restart php-fpm on Debian
+#   service:
+#     enabled: yes
+#     name: php7.0-fpm
+#     state: started
+
+
+- name: config php on Redhat
+  replace:
+    backup: yes
+    path: '{{ item.path }}'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  with_items:
+    - { path: '/etc/httpd/conf.d/php.conf', regexp: '#SetHandler application/x-httpd-php', replace: 'SetHandler "proxy:fcgi://127.0.0.1:9000"' }
+#   notify: restart php-fpm on Redhat
+
+
+# - name: restart php-fpm on Redhat
+#   service:
+#     enabled: yes
+#     name: php-fpm
+#     state: started
+

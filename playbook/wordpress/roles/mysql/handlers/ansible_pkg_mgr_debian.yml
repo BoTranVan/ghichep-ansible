@@ -1,0 +1,32 @@
+---
+
+- name: Install python pip on Debian
+  apt:
+    force: yes
+    install_recommends: yes
+    name: python*pip, libmysqlclient-dev
+    state: present
+    update_cache: yes
+  notify:
+    - upgrade the Python Pip module
+    - Install the Python MySQLB module
+
+
+- name: change root password on Debian
+  shell: mysql -u root -p' ' -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ ansible_root_password_database }}'" --connect-expired-password
+
+
+- name: restart MySQL on Debian
+  service:
+    enabled: yes
+    name: mysql
+    state: '{{ item }}'
+  with_items:
+    - reloaded
+    - started
+    - restarted
+  notify:
+    - change root password on Debian
+    - Create a new database for wordpress
+
+

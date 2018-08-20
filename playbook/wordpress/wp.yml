@@ -1,0 +1,6 @@
+---
+- hosts:
+    - target_wordpress
+    # - target_database
+  roles:
+    - wp

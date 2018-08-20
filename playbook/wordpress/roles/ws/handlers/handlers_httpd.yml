@@ -1,0 +1,33 @@
+---
+
+- name: config web engine httpd
+  replace:
+    backup: yes
+    path: '{{ item.path }}'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  with_items:
+    - { path: '/etc/httpd/conf/httpd.conf', regexp: '(#ServerName(\s).+)\n', replace: 'ServerName localhost:80\nServerTokens Prod \nKeepAlive On ' }
+    - { path: '/etc/httpd/conf/httpd.conf', regexp: '(#\n)(\s){4}(A\w+O\w+\sN\w+)', replace: '#\n    AllowOverride All' }
+    - { path: '/etc/httpd/conf/httpd.conf', regexp: '(index.(\w)+(\s)*)+', replace: 'index.php index.html index.cgi' }
+  notify:
+    - allow http service
+    - initialing httpd wordpress.conf
+    - restart web engine
+
+- name: initialing httpd wordpress.conf
+  template:
+    backup: yes
+    src: 'httpd_wordpress.conf.j2'
+    dest: '/etc/httpd/conf.d/wordpress.conf'
+
+
+- name: allow http service
+  firewalld:
+    immediate: yes
+    permanent: yes
+    service: '{{ item }}'
+    state: enabled
+  with_items:
+    - http
+    - https

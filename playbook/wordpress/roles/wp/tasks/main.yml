@@ -1,0 +1,11 @@
+---
+# tasks file for wp
+
+- name: get wp latest
+  uri:
+    url: '{{ ansible_wp_url }}'
+    dest: '{{ ansible_wp_dest }}'
+  notify:
+    - unpack latest.tar.gz
+    - copy wp-config.php to remote
+    - import role php
